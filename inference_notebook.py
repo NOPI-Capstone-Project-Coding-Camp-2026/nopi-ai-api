@@ -7,25 +7,18 @@ Original file is located at
     https://colab.research.google.com/drive/1R5LmOXloCbrMIZrB3SwhRFoOOb2AKkyH
 """
 
-# ===============================================
-# HAPUS KLO UDH DI LOKAL :D
-# ===============================================
-from google.colab import drive
-drive.mount('/content/drive')
-
 import tensorflow as tf
 from custom_layer import FeatureScalingLayer
 from custom_layer import custom_loss
 
-# ===============================================
-# NANTI DIGANTI UNTUK LOKAL :D
-# ===============================================
 model = tf.keras.models.load_model(
-    "/content/model2.keras",
+    "model2.keras", 
     custom_objects={'custom_loss': custom_loss, 'FeatureScalingLayer': FeatureScalingLayer}
 )
 
 import cv2
+from ocr import extract_text
+from parser import clean_ocr_text
 import numpy as np
 from PIL import Image
 
@@ -53,28 +46,6 @@ def preprocess_for_cnn(image):
     return img_array
 
 
-# ============================================================
-# 3. PREPROCESS FOR OCR (Bisa diubah sesuai kebutuhan OCR :D)
-# ============================================================
-def preprocess_for_ocr(image):
-    gray = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
-
-    # denoise
-    blur = cv2.GaussianBlur(gray, (5, 5), 0)
-
-    # threshold (biar teks lebih jelas)
-    thresh = cv2.adaptiveThreshold(
-        blur,
-        255,
-        cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
-        cv2.THRESH_BINARY,
-        11,
-        2
-    )
-
-    return thresh
-
-
 # =========================
 # 4. CNN CLASSIFIER
 # =========================
@@ -86,42 +57,32 @@ def predict_receipt(image_array):
 
     return label, confidence
 
-# =========================
-# ROI (REGION OF INTEREST) //klo make nnt hehe//
-# ROI = bagian penting dari sebuah gambar yang ingin kita fokuskan
-# ROI = bagian struk yang berisi teks penting (item, harga, total)
-# Manfaat ROI: OCR lebih cepat, OCR lebih akurat, noise berkurang, fokus hanya ke teks penting
-# Sistem : Image --> ROI --> OCR --> Output teks
-# Jika ROI berhasil, maka OCR hanya mendapatkan area penting saja
-# Jika ROI gagal, maka OCR mendapatkan image utuh (fallback)
-# =========================
 
 # =========================
-# 5. OCR ENGINE (PLACEHOLDER)
+# 5. OCR ENGINE (GABUNGAN KODE OCR)
 # =========================
-def run_ocr(ocr_image):
+def run_ocr(image_path):
     """
-    Akan diimplementasikan oleh tim OCR:
-    - Tesseract
-    - EasyOCR
+    Menjalankan Tesseract OCR 
     """
-    raise NotImplementedError("OCR belum diintegrasikan oleh tim OCR")
+    print("📝 Menjalankan OCR...")
+    return extract_text(image_path)
 
 
 # =========================
-# 6. PARSER HASIL OCR
+# 6. PARSER HASIL OCR (GABUNGAN KODE OCR)
 # =========================
 def parse_receipt(text):
     """
-    Akan dikembangkan menjadi:
-    - item list
-    - harga
-    - total
+    Menjalankan Rule-Based Regex 
     """
+    print("✂️ Memotong teks dengan Regex...")
+    parsed_items = clean_ocr_text(text)
+    
     return {
-        "raw_text": text
+        "raw_text": text,
+        "parsed_items": parsed_items
     }
-
 
 # =========================
 # 7. FULL PIPELINE
@@ -133,7 +94,6 @@ def inference_pipeline(image_path):
 
     # 2. preprocessing (split CNN & OCR)
     cnn_input = preprocess_for_cnn(image)
-    ocr_input = preprocess_for_ocr(image)
 
     # 3. CNN prediction
     label, confidence = predict_receipt(cnn_input)
@@ -147,8 +107,8 @@ def inference_pipeline(image_path):
             "confidence": confidence
         }
 
-    # 5. OCR (placeholder)
-    text = run_ocr(ocr_input)
+    # 5. OCR (panggil dengan image_path)
+    text = run_ocr(image_path)
 
     # 6. parsing
     data = parse_receipt(text)
@@ -160,3 +120,26 @@ def inference_pipeline(image_path):
         "cnn_confidence": confidence,
         "data": data
     }
+
+# # =========================
+# # BLOK UJI COBA (Jalan kalau di-Run langsung)
+# # =========================
+# if __name__ == "__main__":
+#     import json
+    
+#     # Sesuaikan path dengan nama file gambar struk yang ada di laptop
+#     gambar_tes = "struk_tes.jpeg" 
+    
+#     print(f"\n🚀 MEMULAI UJI COBA PIPELINE...")
+#     print(f"📂 Gambar yang diproses: {gambar_tes}")
+    
+#     try:
+#         # Jalankan fungsi gabungan kalian!
+#         hasil_akhir = inference_pipeline(gambar_tes)
+        
+#         # Tampilkan hasilnya dengan format JSON yang rapi
+#         print("\n📦 HASIL AKHIR (Siap dikirim ke Frontend):")
+#         print(json.dumps(hasil_akhir, indent=4))
+        
+#     except Exception as e:
+#         print(f"\n💥 YAH ERROR: {e}")

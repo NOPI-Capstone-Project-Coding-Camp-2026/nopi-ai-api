@@ -3,8 +3,12 @@ import pytesseract
 import numpy as np
 import os
 
-# Path tesseract disesuaikan dnegan path di laptop
-pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
+import sys
+
+# Kalau jalan di Windows (laptop lokal), pakai path C:\
+if sys.platform == 'win32':
+    pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
+# Kalau jalan di Linux (Hugging Face), tidak perlu path karena sudah otomatis
 
 def extract_text(image_path: str) -> str:
     """

@@ -217,3 +217,12 @@ dataset_dummy/
 dataset_struk/
 Dataset_Terstruktur_Primer_NOPI.csv
 Dataset_Terstruktur_Sekunder_NOPI.csv
+
+# Gambar uji coba (agar foto struk testing tidak masuk repo)
+*.jpg
+*.jpeg
+*.png
+
+# File sistem operasi (Windows & Mac)
+Thumbs.db
+.DS_Store
