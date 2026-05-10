@@ -212,3 +212,8 @@ dataset_dummy/
 # File Model 
 *.keras
 *.h5
+
+# Dataset primer & sekunder
+dataset_struk/
+Dataset_Terstruktur_Primer_NOPI.csv
+Dataset_Terstruktur_Sekunder_NOPI.csv
