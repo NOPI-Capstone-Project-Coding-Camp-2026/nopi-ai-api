@@ -10,7 +10,7 @@ if sys.platform == 'win32':
     pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
 # Kalau jalan di Linux (Hugging Face), tidak perlu path karena sudah otomatis
 
-def extract_text(image_path: str) -> str:
+def extract_text_tesseract(image_path: str) -> str:
     """
     Fungsi untuk mengekstrak teks dari gambar struk menggunakan OpenCV dan Tesseract.
     """

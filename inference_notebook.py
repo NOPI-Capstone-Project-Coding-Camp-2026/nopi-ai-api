@@ -17,8 +17,8 @@ model = tf.keras.models.load_model(
 )
 
 import cv2
-from ocr import extract_text
-from parser import clean_ocr_text
+from tesseract_ocr import extract_text
+from tesseract_parser import clean_ocr_text
 import numpy as np
 from PIL import Image
 

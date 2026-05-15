@@ -1,7 +1,7 @@
 import os
 import pandas as pd
-from ocr import extract_text
-from parser import clean_ocr_text
+from tesseract_ocr import extract_text
+from tesseract_parser import clean_ocr_text
 
 folder_dataset = "dataset_struk" 
 semua_data_terstruktur = []

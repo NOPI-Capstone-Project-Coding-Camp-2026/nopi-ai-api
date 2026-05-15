@@ -226,3 +226,6 @@ Dataset_Terstruktur_Sekunder_NOPI.csv
 # File sistem operasi (Windows & Mac)
 Thumbs.db
 .DS_Store
+
+# Hasil komparasi model OCR 
+hasil_komparasi_ocr.csv
